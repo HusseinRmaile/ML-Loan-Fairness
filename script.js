@@ -1,3 +1,3 @@
 document.getElementById("groupNum").addEventListener("click", function() {
-    alert("Group 27 🚀");
+    alert("Hussein Rmaile, Aarthi Kannan, Suhana Shirol, Trisha Nittala, Divya Sharma");
 });
