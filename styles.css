@@ -67,8 +67,8 @@ ol.references {
 ol.references li {
     counter-increment: reference-counter; /* Increment the counter for each item */
     margin-left: 1em; /* Add margin to ensure the first letter aligns */
-            text-indent: -1em; /* Move the first line to align with the list number */
-            padding-left: 1em; /* Adjust the padding to space out the text correctly */
+    text-indent: -1.5em; /* Move the first line to align with the list number */
+    padding-left: 1em; /* Adjust the padding to space out the text correctly */
 }
 
 /* Style for each list item prefix */
