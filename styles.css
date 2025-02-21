@@ -16,7 +16,7 @@ body {
 header {
     text-align: center;
     padding: 30px 0;
-    background-color: #4caf50;
+    background-color: #378439;
     color: white;
 }
 
@@ -37,9 +37,15 @@ main {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.section h2, .section h3 {
-    color: #4caf50; /* Green heading color */
+.section h2 {
+    color: #378439; /* Green heading color */
     margin-bottom: 15px;
+}
+
+.section h3 {
+    color: #52b255;
+    margin-bottom: 10px;
+    text-decoration: underline;
 }
 
 .section p, .section ul, .section ol {
@@ -48,6 +54,17 @@ main {
 
 ul, ol {
     padding-left: 20px;
+}
+
+code {
+    background-color: #e6f8ef;         /* Light grey background */
+    border: 1px solid #e6f8ef;            /* Light grey border around the code block */
+    font-family: Consolas, 'Courier New', monospace; /* Monospace font for better readability */
+    font-size: 14px;                   /* Slightly larger font size */
+    white-space: pre-wrap;             /* Ensures long lines break properly */
+    border-radius: 5px;                /* Rounded corners for a softer look */
+    line-height: 1.5; 
+    color: #378439;                    /* Makes the code text color more distinct */
 }
 
 .gantt-container {
