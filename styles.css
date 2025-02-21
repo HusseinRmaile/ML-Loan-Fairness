@@ -52,8 +52,28 @@ main {
     margin-bottom: 15px;
 }
 
-ul, ol {
+ul{
     padding-left: 20px;
+}
+
+/* Style for the ordered list */
+ol.references {
+    list-style-type: none; /* Remove default numbering */
+    counter-reset: reference-counter; /* Initialize custom counter */
+    padding-left: 0; /* Remove default padding from the ordered list */
+}
+
+/* Style for each list item */
+ol.references li {
+    counter-increment: reference-counter; /* Increment the counter for each item */
+    margin-left: 1em; /* Add margin to ensure the first letter aligns */
+            text-indent: -1em; /* Move the first line to align with the list number */
+            padding-left: 1em; /* Adjust the padding to space out the text correctly */
+}
+
+/* Style for each list item prefix */
+ol.references li::before {
+    content: "[" counter(reference-counter) "] "; /* Create the [number] format */ /* Optional: make the number bold */
 }
 
 code {

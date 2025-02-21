@@ -8,7 +8,10 @@
 </head>
 <body>
     <header>
-        <h1>ML 4641 Project Proposal: Spring 2025</h1>
+        <h1>Fair & Accurate Loan Approval Models</h1>
+        <h2>Addressing Bias in Algorithmic Lending</h2>
+        <h4>Group 27 Project Proposal - ML 4641 Spring 2025</h4>
+        <p>Aarthi Kannan, Trisha Nittala, Hussein Rmaile, Divya Sharma, Suhana Shirol</p>
     </header>
 
     <main>
@@ -26,12 +29,23 @@
         <section class="section">
             <h2>Dataset Description</h2>
             <ul>
-                <li><a href="https://www.consumerfinance.gov/data-research/hmda/historic-data/?geo=ga&records=all-records&field_descriptions=labels">HMDA Data Set</a> (Training): Mortgage data (2007-2017)</li>
+                <li><a href="https://www.consumerfinance.gov/data-research/hmda/historic-data/?geo=ga&records=all-records&field_descriptions=labels">Home Mortgage Disclosure Act Dataset</a> (Training & Validation): Mortgage data (2007-2017)</li>
+                    <ul>
+                        <li> ~15 million data points, 78 features</li>
+                        <li>We could split this dataset into training and validation datasets</li>
+                    </ul>
                 <li><a href="https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset">Loan Approval Prediction</a> (Training): Financial and personal data for assessing loan eligibility</li>
+                    <ul>
+                        <li>4,269 data points, 12 features</li>
+                    </ul>
                 <li><a href="https://www.kaggle.com/datasets/wordsforthewise/lending-club">Lending Club Loan Data</a> (Validation): Accepted and
                     rejected loans from the LendingClub website (2007-2018)</li>
+                    <ul>
+                        <li>~30 million data points, 150 features</li>
+                        <li>We could split this dataset into training and validation datasets</li>
+                    </ul>
             </ul>
-            <p><strong>The above datasets have the following key features:</strong></p>
+            <p><strong>The above datasets include the following key features:</strong></p>
             <ul>
                 <li>Income</li>
                 <li>Loan amount</li>
@@ -132,10 +146,10 @@
         <section class="section">
             <h2>CONTRIBUTIONS</h2>
             <table border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse; text-align:left;">
-                <thead style="background-color:#4caf50; color:white;">
+                <thead style="background-color:#378439; color:white;">
                     <tr>
-                        <th style="text-align: center;">Contributor</th>
-                        <th>Contributions</th>
+                        <th style="text-align: center;">Name</th>
+                        <th  style="padding-left: 10px;">Proposal Contributions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,7 +170,7 @@
                         <td style="text-align: center;"><strong>Trisha Nittala</strong></td>
                         <td>
                             <ul>
-                                <li>Helped write Data Inspection section of proposal.</li>
+                                <li>Helped write dataset description section of proposal.</li>
                                 <li>Created structured presentation slides.</li>
                                 <li>Researched and sourced datasets, including HMDA and Loan Approval Prediction.</li>
                                 <li>Contributed to video presentation.</li>
@@ -182,11 +196,11 @@
                         <td style="text-align: center;"><strong>Divya Sharma</strong></td>
                         <td>
                             <ul>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
+                                <li>Conducted research on various lending datasets relevant and identified potentially applicable key features</li>
+                                <li>Analyzed each dataset, and how each would be involved in our project.</li>
+                                <li>Identified data cleaning and preprocessing techniques</li>
+                                <li>Designed a well-structured presentation slide that effectively translated our project proposal into clear, concise, and visually engaging content</li>
+                                <li>Wrote dataset description section</li>
                                 <li></li>
                                 <li></li>
                             </ul>
@@ -197,11 +211,13 @@
                         <td>
                             <ul>
                                 <li>Wrote introduction, literature review, and ML models section.</li>
-                                <li>Read various peer-reviewed papers in order to write literature review and added in-text citations across the proposal.</li>
-                                <li>Identified relevant models and quantitative metrics.</li>
-                                <li>Created references using IEEE format.</li>
-                                <li>Contributed to video presentation.</li>
+                                <li>Read various peer-reviewed papers in order to write literature review and identify appropriate approaches.</li>
+                                <li>Identified relevant models, pre-processing methods, and quantitative metrics.</li>
+                                <li>Evaluated dataset size</li>
+                                <li>Created references and added in-text citations using IEEE format.</li>
+                                <li>Turned the document into HTML/CSS files for hosting on GitHub Pages.</li>
                                 <li>Condensed and edited proposal.</li>
+                                <li>Contributed to video presentation.</li>
                             </ul>
                         </td>
                     </tr>
@@ -212,7 +228,7 @@
 
         <section class="section">
             <h2>REFERENCES</h2>
-            <ol>
+            <ol class="references">
                 <li>R. Bartlett, A. Morse, R. Stanton, and N. Wallace, “Consumer-lending discrimination in the FinTech Era,” <i>Journal of Financial Economics</i>, vol. 143, no. 1, pp. 30–56, 2022. <a href="https://doi.org/10.1016/j.jfineco.2021.05.047">https://doi.org/10.1016/j.jfineco.2021.05.047</a>.</li>
         
                 <li>M.S.A. Lee and L. Floridi, “Algorithmic Fairness in Mortgage Lending: from Absolute Conditions to Relational Trade-offs,” <i>Minds & Machines</i>, vol. 31, pp. 165–191, 2021. <a href="https://doi.org/10.1007/s11023-020-09529-4">https://doi.org/10.1007/s11023-020-09529-4</a>.</li>
