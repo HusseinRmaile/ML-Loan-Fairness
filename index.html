@@ -3,13 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github Pages</title>
+    <title>ML 4641 Project Proposal - Spring 2025</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Group 27 github pages</h1>
-    <button id="members">Project Members</button>
+    <header>
+        <h1>ML 4641 Project Proposal: Spring 2025</h1>
+    </header>
 
-    <script src="script.js"></script>
+    <main>
+        <section class="section">
+            <h2>INTRODUCTION/BACKGROUND</h2>
+            <p><strong>Introduction:</strong> There are concerns regarding the fairness of algorithmic decision-making utilized by lenders, namely the models’ ability to eliminate discrimination along racial and minority lines. Different ML models have trade-offs in accuracy and fairness. In this project, we aim to develop equitable and accurate loan approval models.</p>
+
+            <p><strong>Literature Review:</strong></p>
+            <p>Lee and Floridi [2] explore the complexities of algorithmic fairness in mortgage lending. While fairness metrics quantify discrimination, they are not a one-size-fits-all approach [2]. Algorithms must adopt systemic approaches that address structural biases embedded in data. This paper also compares trade-offs between accuracy and fairness for different models.</p>
+            <p>Zhang et al. conclude that adversarial training is an effective strategy where the secondary model penalizes unfair predictions without affecting the classifier’s accuracy [3].</p>
+            <p>Bao et al. [4] demonstrate that integrated supervised-unsupervised models improve accuracy of credit risk assessments. Unifying this predictive accuracy with established fairness strategies could lead to more equitable and accurate loan approval algorithms.</p>
+        </section>
+
+        <section class="section">
+            <h2>Dataset Description</h2>
+            <ul>
+                <li><strong>HMDA Data Set (Training):</strong> <a href="https://www.consumerfinance.gov/data-research/hmda/historic-data/?geo=ga&records=all-records&field_descriptions=labels">Mortgage data (2007-2017)</a>.</li>
+                <li><strong>Loan Approval Prediction (Training):</strong> <a href="https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset">Financial and personal data for assessing loan eligibility</a>.</li>
+                <li><strong>Lending Club Loan Data (Validation):</strong> <a href="https://www.kaggle.com/datasets/wordsforthewise/lending-club">Accepted and rejected loans from the LendingClub website (2007-2018)</a>.</li>
+            </ul>
+            <p><strong>Key Features:</strong></p>
+            <ul>
+                <li>Income</li>
+                <li>Loan amount</li>
+                <li>Credit score</li>
+                <li>Approvals/Denials</li>
+                <li>Applicant demographics</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>PROBLEM DEFINITION</h2>
+            <p><strong>Problem:</strong> Machine learning models in financial lending often perpetuate biases from historical data, disproportionately affecting marginalized communities such as racial minorities, immigrants, and older applicants. These biases lead to higher rejection rates and unfavorable loan terms leading to consequences including Latinx and Black borrowers paying over $450 million more in interest annually [1].</p>
+            <p><strong>Motivation:</strong> Addressing bias in lending models is essential for financial inclusion. Fairness-aware machine learning can help ensure equitable access to credit while maintaining predictive accuracy.</p>
+        </section>
+
+        <section class="section">
+            <h2>METHODS</h2>
+            <h3>Data Pre-processing Methods:</h3>
+            <ul>
+                <li>Apply fair encoding to variables to prevent bias.</li>
+                <li>Use causal inference techniques to remove proxy variables.</li>
+                <li>Re-weight underrepresented groups to improve fairness.</li>
+                <li>Harmonize features across datasets.</li>
+            </ul>
+
+            <h3>ML Models:</h3>
+            <ul>
+                <li>Logistic Regression (sklearn.linear_model)</li>
+                <li>Naive Bayes (CategoricalNB)</li>
+                <li>Stochastic Gradient Descent (SGD) for Adversarial Debiasing (AIF360's AdversarialDebiasing)</li>
+                <li>Integrated supervised-unsupervised model (MiniBatchKMeans + LogisticRegression)</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>RESULTS AND DISCUSSION</h2>
+            <h3>Quantitative Metrics:</h3>
+            <ul>
+                <li>Confusion Matrix: Assesses overall accuracy.</li>
+                <li>True/False Positives & Negatives: Identify misclassification risks in loan approvals.</li>
+                <li>Negative Predictive Value: Ensures fair rejection decisions, reducing bias.</li>
+            </ul>
+
+            <h3>Project Goals:</h3>
+            <ul>
+                <li>Achieve >85% accuracy with balanced precision and recall.</li>
+                <li>Minimize false positives/negatives to reduce biased loan decisions.</li>
+                <li>Improve fairness metrics by addressing demographic disparities.</li>
+                <li>Apply adversarial training, re-weighting, and fair encoding for bias mitigation.</li>
+                <li>Ensure interpretability using transparent feature selection.</li>
+                <li>Validate model robustness via cross-dataset testing on the Lending Club dataset.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>GANTT CHART</h2>
+            <p>The following Gantt chart outlines the project plan for the Spring 2025 semester:</p>
+            <div class="gantt-container">
+                <img src="ML spring 2025 plan.png" alt="ML Spring 2025 Gantt Chart">
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>CONTRIBUTIONS</h2>
+            <p><strong>Aarthi Kannan:</strong> Researched and reviewed academic papers, developed the problem definition, formatted slides, and contributed to the video presentation.</p>
+            <p><strong>Trisha Nittala:</strong> Helped write the Data Inspection section, created presentation slides, sourced datasets, and contributed to the video presentation.</p>
+            <p><strong>Divya Sharma & Hussein Rmaile:</strong> Did results and discussion section, made Gantt Chart, set up GitHub pages, and converted the proposal to HTML/CSS for hosting.</p>
+            <p><strong>Suhana Shirol:</strong> Wrote introduction, literature review, ML models section, created references, and contributed to the video presentation.</p>
+        </section>
+
+        <section class="section">
+            <h2>REFERENCES</h2>
+            <ol>
+                <li>R. Bartlett, A. Morse, R. Stanton, and N. Wallace, “Consumer-lending discrimination in the FinTech Era,” <a href="https://doi.org/10.1016/j.jfineco.2021.05.047">Journal of Financial Economics (2022)</a>.</li>
+                <li>M.S.A. Lee and L. Floridi, “Algorithmic Fairness in Mortgage Lending,” <a href="https://doi.org/10.1007/s11023-020-09529-4">Minds & Machines (2021)</a>.</li>
+                <li>B. Zhang, B. Lemoine and M. Mitchell, “Mitigating Unwanted Biases with Adversarial Learning,” <a href="https://doi.org/10.1145/3278721.3278779">AIES '18 (2018)</a>.</li>
+                <li>W. Bao, N. Lianju and K. Yua, “Integration of ML algorithms for credit risk assessment,” <a href="https://doi.org/10.1016/j.eswa.2019.02.033">Expert Systems with Applications (2019)</a>.</li>
+            </ol>
+        </section>
+    </main>
+
 </body>
 </html>
