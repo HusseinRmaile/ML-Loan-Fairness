@@ -13,10 +13,11 @@
 
     <main>
         <section class="section">
-            <h2>INTRODUCTION/BACKGROUND</h2>
-            <p><strong>Introduction:</strong> There are concerns regarding the fairness of algorithmic decision-making utilized by lenders, namely the models’ ability to eliminate discrimination along racial and minority lines. Different ML models have trade-offs in accuracy and fairness. In this project, we aim to develop equitable and accurate loan approval models.</p>
+            <h2>BACKGROUND</h2>
+            <h3>Introduction</h3>
+            <p>There are concerns regarding the fairness of algorithmic decision-making utilized by lenders, namely the models’ ability to eliminate discrimination along racial and minority lines. Different ML models have trade-offs in accuracy and fairness. In this project, we aim to develop equitable and accurate loan approval models.</p>
 
-            <p><strong>Literature Review:</strong></p>
+            <h3>Literature Review</h3>
             <p>Lee and Floridi [2] explore the complexities of algorithmic fairness in mortgage lending. While fairness metrics quantify discrimination, they are not a one-size-fits-all approach [2]. Algorithms must adopt systemic approaches that address structural biases embedded in data. This paper also compares trade-offs between accuracy and fairness for different models.</p>
             <p>Zhang et al. conclude that adversarial training is an effective strategy where the secondary model penalizes unfair predictions without affecting the classifier’s accuracy [3].</p>
             <p>Bao et al. [4] demonstrate that integrated supervised-unsupervised models improve accuracy of credit risk assessments. Unifying this predictive accuracy with established fairness strategies could lead to more equitable and accurate loan approval algorithms.</p>
@@ -29,7 +30,7 @@
                 <li><strong>Loan Approval Prediction (Training):</strong> <a href="https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset">Financial and personal data for assessing loan eligibility</a>.</li>
                 <li><strong>Lending Club Loan Data (Validation):</strong> <a href="https://www.kaggle.com/datasets/wordsforthewise/lending-club">Accepted and rejected loans from the LendingClub website (2007-2018)</a>.</li>
             </ul>
-            <p><strong>Key Features:</strong></p>
+            <p><strong>The above datasets have the following key features:</strong></p>
             <ul>
                 <li>Income</li>
                 <li>Loan amount</li>
@@ -41,39 +42,64 @@
 
         <section class="section">
             <h2>PROBLEM DEFINITION</h2>
-            <p><strong>Problem:</strong> Machine learning models in financial lending often perpetuate biases from historical data, disproportionately affecting marginalized communities such as racial minorities, immigrants, and older applicants. These biases lead to higher rejection rates and unfavorable loan terms leading to consequences including Latinx and Black borrowers paying over $450 million more in interest annually [1].</p>
-            <p><strong>Motivation:</strong> Addressing bias in lending models is essential for financial inclusion. Fairness-aware machine learning can help ensure equitable access to credit while maintaining predictive accuracy.</p>
+            <h3>Problem</h3> Machine learning models in financial lending often perpetuate biases from historical data, disproportionately affecting marginalized communities such as racial minorities, immigrants, and older applicants. These biases lead to higher rejection rates and unfavorable loan terms leading to consequences including Latinx and Black borrowers paying over $450 million more in interest annually [1].</p>
+            <h3>Motivation</h3> Addressing bias in lending models is essential for financial inclusion. Fairness-aware machine learning can help ensure equitable access to credit while maintaining predictive accuracy.</p>
         </section>
 
         <section class="section">
             <h2>METHODS</h2>
-            <h3>Data Pre-processing Methods:</h3>
+            <h3>Data Pre-processing Methods</h3>
             <ul>
-                <li>Apply fair encoding to variables to prevent bias.</li>
-                <li>Use causal inference techniques to remove proxy variables.</li>
-                <li>Re-weight underrepresented groups to improve fairness.</li>
-                <li>Harmonize features across datasets.</li>
+                <li><strong>Fair Encoding & Proxy Minimization</strong>
+                    <ul>
+                        <li>Apply fair encoding to variables to prevent bias.</li>
+                        <li>Use causal inference techniques to remove proxy variables.</li>
+                    </ul>
+                <li><strong>Re-weighting & Balancing Data</strong></li>
+                    <ul>
+                        <li>Re-weight underrepresented groups to improve fairness.</li>
+                    </ul>
+                <li><strong>Cross-Dataset Alignment</strong></li>
+                    <ul>
+                        <li>Harmonize features across datasets.</li>
+                    </ul>
             </ul>
 
-            <h3>ML Models:</h3>
+            <h3>ML Models</h3>
+            <p>Logistic regression and Naive Bayes are simple, effective classifiers for loan approval prediction, effective for predicting loan approvals based on features like income, loan amount, and credit score.</p>
             <ul>
-                <li>Logistic Regression (sklearn.linear_model)</li>
-                <li>Naive Bayes (CategoricalNB)</li>
-                <li>Stochastic Gradient Descent (SGD) for Adversarial Debiasing (AIF360's AdversarialDebiasing)</li>
-                <li>Integrated supervised-unsupervised model (MiniBatchKMeans + LogisticRegression)</li>
+                <li><strong>Logistic Regression</strong></li>
+                    <ul>
+                        <li><code>LogisticRegression</code> from <code>sklearn.linear_model</code></li>
+                    </ul>
+                <li><strong>Naive Bayes</strong></li>
+                    <ul>
+                        <li><code>Categorical NB</code> from <code>sklearn.naive_bayes</code></li>
+                    </ul>
+                <li><strong>Stochastic Gradient Descent (SGD) for Adversarial Debiasing</strong></li>
+                    <ul>
+                        <li><code>SGDClassifier</code> from <code>sklearn.linear_model</code> for the primary model.</li>
+                        <li>AIF360's <code>AdversarialDebiasing</code> class for fairness-aware debiasing</li>
+                    </ul>
+                <li><strong>Integrated supervised-unsupervised model</strong></li>
+                    <ul>
+                        <li>This hybrid approach helps manage complexity while supporting fairness interventions</li>
+                        <li><code>MiniBatchKMeans</code> from <code>sklearn.cluster</code> for unsupervised clustering</li>
+                        <li>Combine with <code>LogisticRegression</code> for supervised classification</li>
+                    </ul>
             </ul>
         </section>
 
         <section class="section">
             <h2>RESULTS AND DISCUSSION</h2>
-            <h3>Quantitative Metrics:</h3>
+            <h3>Quantitative Metrics</h3>
             <ul>
                 <li>Confusion Matrix: Assesses overall accuracy.</li>
                 <li>True/False Positives & Negatives: Identify misclassification risks in loan approvals.</li>
                 <li>Negative Predictive Value: Ensures fair rejection decisions, reducing bias.</li>
             </ul>
 
-            <h3>Project Goals:</h3>
+            <h3>Project Goals</h3>
             <ul>
                 <li>Achieve >85% accuracy with balanced precision and recall.</li>
                 <li>Minimize false positives/negatives to reduce biased loan decisions.</li>
