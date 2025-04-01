@@ -125,7 +125,20 @@
                 <img src="midterm images/pre loan amount outlier handling 2.png" alt="Loan amount after log transformation">
             </div>
 
-            <p>We dropped features with correlation coefficient below 0.01 with <code>action_taken</code>, including <code>lei</code>, <code>purchaser_type</code>, <code>open_end_line_of_credit</code>, <code>submission_of_application</code>, <code>reverse_mortgage</code>, <code>business_or_commercial_purpose</code>, <code>initially_payable_to_institution</code>, <code>balloon_payment</code>, and <code>conforming_loan_limit</code>. Feature engineering included deriving credit/employment history from denial reasons and estimating <code>monthly_payments</code> from loan amount, term, and interest rate.</p>
+            <p>We dropped features with correlation coefficient below 0.01 with <code>action_taken</code>, including <code>lei</code>, <code>purchaser_type</code>, <code>open_end_line_of_credit</code>, <code>submission_of_application</code>, <code>reverse_mortgage</code>, <code>business_or_commercial_purpose</code>, <code>initially_payable_to_institution</code>, <code>balloon_payment</code>, and <code>conforming_loan_limit</code>. <p>Feature engineering included deriving credit/employment history from denial reasons and estimating <code>monthly_payments</code> from loan amount, term, and interest rate.</p>
+
+            <h3>ML Model Implemented</h3>
+            <p>We implemented a Logistic Regression model, a classic supervised learning algorithm suitable for binary classification tasks. The goal was to predict whether a loan application would be approved or denied based on applicant, loan, and property-related features from the 2018 HMDA dataset. Missing values were addressed using context-specific imputations (e.g., income from FFIEC metro median income, interest rates by debt-to-income ratio grouping).</p>
+            
+            <p>Logistic Regression was selected due to its simplicity, interpretability, and efficiency when working with high-dimensional, tabular data. It serves as a strong baseline for feature signal evaluation and provides coefficients that indicate the relative importance of inputs. This approach aligns with supervised learning principles taught in class.</p>
+            
+            <h3>Justification</h3>
+            <p>Logistic Regression was chosen as the primary model for this project because it strikes an ideal balance between interpretability, efficiency, and predictive power for structured, tabular data such as the HMDA loan application records. The goal of the project was not just to predict whether a loan would be approved or denied, but also to understand which features (e.g., income, loan amount, debt-to-income ratio) most influence that outcome.</p>
+            
+            <p>Logistic Regression is inherently interpretable — the model’s coefficients offer direct insights into the direction and strength of each feature’s impact. This is particularly important in the financial domain, where explainability is crucial for auditing and ethical considerations. Additionally, the binary nature of the target variable makes logistic regression a natural fit. The model performs well when features are linearly related to the log-odds of the outcome — a reasonable assumption after our preprocessing and feature engineering.</p>
+            
+            <p>Compared to more complex models, Logistic Regression is also less prone to overfitting on moderately sized datasets and allows for rapid iteration and validation. This made it a strategically sound and academically aligned choice for building a reliable, explainable baseline in the context of supervised learning and real-world decision modeling.</p>
+            
         </section>
 
         <section class="section">
@@ -225,6 +238,9 @@ weighted avg    0.83      0.73      0.76    178940
             <p>The ROC AUC score of 0.79 tells us that while the model is better than random guessing, it still struggles to cleanly separate approvals from denials. Beyond accuracy, fairness is another major concern. Looking at the fairness metrics, we see significant disparities across demographic groups. Loan approvals are less likely for non-privileged racial groups (Disparate Impact Ratio = 0.63, below the 0.8 fairness threshold). Gender disparities also exist (DIR = 0.78), with lower approval rates for one gender. The Demographic Parity Differences (-0.34 for race, -0.16 for sex) confirm unequal treatment.</p>
 
             <p>Overall, while the model performs well in identifying approvals, it struggles with fairness and denied loan predictions. Visual tools like ROC curves, confusion matrices, and fairness comparisons help clarify where improvement is needed.</p>
+
+            <p>Our model performed well largely because mortgage lending decisions follow clear-cut financial rules that are easy for a classification model to learn. The mortgage industry relies on well-defined underwriting criteria, such as credit scores, income, debt-to-income ratio, and loan-to-value ratio, which are strong, structured predictors of loan approval. Since these financial factors have a direct impact on lending decisions, they provide a clear decision-making framework that aligns well with a model like Logistic Regression. Additionally, we conducted extensive data preprocessing to clean and structure the dataset, including handling missing values, engineering new features, and standardizing key financial metrics. With a large and structured dataset (2018 HMDA dataset, nearly 180,000 applications), the model had ample examples to learn patterns in past approvals and denials, allowing it to perform well overall despite some limitations in correctly identifying denials and fairness disparities.</p>
+        
         </section>
 
         <section class="section">
@@ -235,9 +251,11 @@ weighted avg    0.83      0.73      0.76    178940
                 <li><strong>Reassess Feature Selection:</strong> We'll take a closer look at the features we removed and run experiments to see how they impact the model—both on their own and in combination with other variables. Instead of only using correlation thresholds, we’ll try model-driven methods like recursive feature elimination and permutation importance to see which features matter most.</li>
                 <li><strong>Restore Key Features:</strong> The performance drop after removing <code>reverse_mortgage</code> and <code>open_end_line_of_credit</code> shows these features likely provide important information. We’ll bring these features back into the model and check if doing so improves both predictive accuracy and fairness.</li>
                 <li><strong>Expand Fairness Analysis:</strong> While we’ll keep evaluating demographic parity, we’ll add other fairness metrics such as equal opportunity difference and average odds difference to get a more comprehensive understanding of any biases in the model.</li>
+                <li><strong>Test Fairness Mitigation Techniques:</strong> We plan to evaluate methods like reweighing and adversarial debiasing to reduce bias without severely harming performance.</li>
                 <li><strong>Introduce Additional Models:</strong> To establish stronger baselines, we plan to experiment with ensemble methods like Random Forests and Gradient Boosting. These models might offer better performance while maintaining fairness.</li>
                 <li><strong>Evaluate Unsupervised Learning:</strong> In the next phase, we’ll explore unsupervised learning methods like clustering to uncover hidden patterns in the data. This can guide fairness-aware preprocessing by highlighting groups that may not be reflected in demographic features but still impact loan decisions.</li>
             </ul>
+            
 
             <p>These steps will help us create a more balanced model pipeline—one that maintains predictive accuracy while also addressing fairness concerns.</p>
         </section>
