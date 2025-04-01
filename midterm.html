@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ML 4641 Midterm Checkpoint - Spring 2025</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="scripts.js"></script>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button id="btn-proposal" class="nav-button">Project Proposal</button>
+        <button id="btn-midterm" class="nav-button">Midterm Checkpoint</button>
+    </nav>
+
+    <!-- Page Header -->
+    <header>
+        <h1>CS4641 Project Midterm Checkpoint</h1>
+    </header>
+
+    <main>
+        <section class="section">
+            <h2>BACKGROUND</h2>
+
+            <h3>Introduction & Background</h3>
+            <p>Algorithmic decision-making in the financial sector has become increasingly prevalent, particularly in credit risk assessment and loan approval processes. While these systems promise efficiency and scalability, they also raise concerns about fairness, transparency, and accountability—especially when models learn from historical data that may embed systemic biases. In high-stakes domains such as mortgage lending, unfair or biased predictions can have significant social consequences, reinforcing existing inequalities and denying opportunities to already marginalized groups.</p>
+
+            <h3>Literature Review</h3>
+            <p>Recent research has focused on quantifying and mitigating these algorithmic biases. Lee and Floridi [2] explore the ethical challenges of algorithmic fairness in mortgage lending, arguing that fairness metrics, while useful, cannot fully capture the complexities of discrimination. They emphasize the need for holistic approaches that address structural biases embedded within datasets. Their work highlights the difficult trade-offs between optimizing for accuracy and achieving fairness.</p>
+
+            <p>Zhang et al. [3] propose adversarial training as a promising mitigation strategy. Their method involves a secondary model that penalizes unfair predictions, allowing the primary classifier to maintain its accuracy while reducing discriminatory behavior.</p>
+
+            <p>In a complementary study, Bao et al. [4] demonstrate that hybrid models that integrate supervised and unsupervised learning outperform traditional models in predicting credit risk. They suggest that combining these predictive techniques with fairness-aware methods could lead to more balanced and equitable algorithms.</p>
+        </section>
+
+        <section class="section">
+            <h2>DATASET DESCRIPTION</h2>
+            <p>To explore the impact of fairness-aware machine learning in financial decision-making, we use the Snapshot National Loan-Level Dataset from the Home Mortgage Disclosure Act (HMDA) publication. This dataset provides comprehensive information on mortgage loan applications across the United States, including features such as applicant income, loan amount, credit score, loan type, property location, and demographic attributes like race, gender, and ethnicity. These features are essential not only for evaluating creditworthiness but also for assessing fairness and potential bias in loan approval decisions.</p>
+
+            <p>We specifically selected data outside of the 2019–2021 period to avoid the distortions caused by the COVID-19 pandemic. During this time, mortgage lending practices were significantly impacted by emergency government policies, fluctuating interest rates, and unpredictable economic behavior. As a result, the patterns in loan approvals and denials may not reflect typical lending dynamics, which could skew model performance and fairness evaluations.</p>
+
+            <p><strong>Dataset Link:</strong> <a href="https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2022" target="_blank">Snapshot National Loan-Level Dataset (2022)</a></p>
+        </section>
+
+        <section class="section">
+            <h2>PROBLEM DEFINITION</h2>
+
+            <h3>Problem</h3>
+            <p>Machine learning models are increasingly used in financial lending to automate loan approval decisions. However, these models often inherit and amplify historical biases embedded in the data, disproportionately impacting marginalized communities such as racial minorities, immigrants, and older applicants. These biases manifest in higher rejection rates and less favorable loan terms—contributing to systemic financial exclusion. For instance, Latinx and Black borrowers collectively pay over $450 million more in interest annually compared to white borrowers [1].</p>
+
+            <p>Even in competitive lending markets, bias persists due to institutional incentives that prioritize short-term profitability over long-term fairness. Traditional credit scoring systems further reinforce inequities by reflecting discriminatory practices of the past. Despite regulatory frameworks like the Equal Credit Opportunity Act (ECOA) and Fair Lending Laws, algorithmic lending systems continue to produce unfair outcomes. This undermines trust in automated financial tools and deepens socioeconomic disparities.</p>
+
+            <p>Addressing these issues is essential. Our project aims to build fairness-aware loan approval models that retain predictive power while reducing bias. We incorporate fairness strategies throughout the machine learning pipeline—from data preprocessing and model selection to fairness metrics and evaluation. By doing so, we promote equitable, transparent, and responsible lending practices in the age of automation.</p>
+
+            <h3>Motivation</h3>
+            <p>Equitable access to credit is a cornerstone of financial inclusion and economic mobility. However, current lending models powered by machine learning often reinforce existing inequalities, especially when trained on biased historical data. This not only harms disadvantaged individuals but also exposes financial institutions to ethical, reputational, and regulatory risks.</p>
+
+            <p>Our project is driven by the belief that predictive performance and fairness are not mutually exclusive. By developing interpretable and fairness-aware algorithms, we can ensure that lending decisions are not only accurate but also just. Through this approach, we seek to foster responsible AI adoption in finance, increase trust in algorithmic systems, and create meaningful pathways toward inclusive economic growth.</p>
+        </section>
+
