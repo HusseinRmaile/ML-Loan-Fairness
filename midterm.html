@@ -60,3 +60,247 @@
             <p>Our project is driven by the belief that predictive performance and fairness are not mutually exclusive. By developing interpretable and fairness-aware algorithms, we can ensure that lending decisions are not only accurate but also just. Through this approach, we seek to foster responsible AI adoption in finance, increase trust in algorithmic systems, and create meaningful pathways toward inclusive economic growth.</p>
         </section>
 
+        <section class="section">
+            <h2>METHODS</h2>
+
+            <h3>Preprocessing</h3>
+            <p>To increase data quality and maintain predictive accuracy, we began preprocessing by removing features with more than 50% null values. The dropped features included loan cost and fee-related fields such as <code>rate_spread</code>, <code>total_loan_costs</code>, <code>total_points_and_fees</code>, <code>origination_charges</code>, <code>discount_points</code>, <code>lender_credits</code>, <code>prepayment_penalty_term</code>, and <code>intro_rate_period</code>. The response variable, <code>action_taken</code>, was refined to represent loan approval or denial. Approved loans (1 – originated, 2 – approved but not accepted) were mapped to 1, while denied loans (3 – denied by the financial institution, 7 – preapproval request denied) were mapped to 0, with all other action codes dropped.</p>
+
+            <p>For consistency, we focused on first-lien, 1–4 unit, owner-occupied, site-built, fully amortizing conventional loans intended for home purchase, home refinancing, and cash-out refinancing. We also consolidated co-applicant features by introducing a binary <code>has_co_applicant</code> flag, where 1 indicated the presence of a co-applicant and 0 indicated none. Other co-applicant demographic features, such as <code>co_applicant_credit_score_type</code>, <code>co_applicant_ethnicity_1</code>, <code>co_applicant_race_1</code>, and <code>co_applicant_sex</code>, were removed. Observed demographic features (<code>applicant_race_observed</code>, <code>applicant_ethnicity_observed</code>, <code>applicant_sex_observed</code>) were also dropped to mitigate potential bias.</p>
+
+            <p>We addressed missing values in the <code>interest_rate</code> field by grouping rows by <code>debt_to_income_ratio</code> and computing the median interest rate within each group. Missing values were then imputed using the group median. Correlation analysis revealed weak positive relationships between features, and chi-square tests showed statistically significant relationships between approval rates and observed demographic features:</p>
+
+            <ul>
+                <li>Applicant ethnicity observed: χ² = 3936656.02, p = 0.0</li>
+                <li>Applicant race observed: χ² = 3810281.38, p = 0.0</li>
+            </ul>
+
+            <div class="gantt-container">
+                <img src="midterm images/loan approval rates by race observation status 1.png" alt="Approval rates by race observation status">
+            </div>
+
+            <div class="gantt-container">
+                <img src="midterm images/loan approval rates by ethnicity observation status 1.png" alt="Approval rates by ethnicity observation status">
+            </div>
+
+            <div class="gantt-container">
+                <img src="midterm images/loan approval rates by sex observation status 1.png" alt="Approval rates by sex observation status">
+            </div>
+
+            <p>There is a slight difference between approval rates when demographic data is observed rather than self-reported. To reduce bias, we excluded these rows.</p>
+
+            <div class="gantt-container">
+                <img src="midterm images/loan approval rates by sex 1.png" alt="Approval rates by sex">
+            </div>
+
+            <p>We remapped <code>conforming_loan_limits</code> to numerical values, converted <code>total_units</code> to integers, and removed loans marked as "Exempt" or "NA" for <code>debt_to_income_ratio</code>. Outlier handling and imputation steps were applied as follows:</p>
+
+            <h3>Pre outlier income dist:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre outlier income dist 1.png" alt="Income distribution before outlier handling">
+            </div>
+
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre outlier income dist 2.png" alt="Income distribution after IQR method">
+            </div>
+
+            <h3>Pre outlier handling property value:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre outlier handling property value 1.png" alt="Property value before outlier handling">
+            </div>
+
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre outlier handling property value 2.png" alt="Property value after log transformation">
+            </div>
+
+            <h3>Pre loan amount outlier handling:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre loan amount outlier handling 1.png" alt="Loan amount before outlier handling">
+            </div>
+
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="midterm images/pre loan amount outlier handling 2.png" alt="Loan amount after log transformation">
+            </div>
+
+            <p>We dropped features with correlation coefficient below 0.01 with <code>action_taken</code>, including <code>lei</code>, <code>purchaser_type</code>, <code>open_end_line_of_credit</code>, <code>submission_of_application</code>, <code>reverse_mortgage</code>, <code>business_or_commercial_purpose</code>, <code>initially_payable_to_institution</code>, <code>balloon_payment</code>, and <code>conforming_loan_limit</code>. Feature engineering included deriving credit/employment history from denial reasons and estimating <code>monthly_payments</code> from loan amount, term, and interest rate.</p>
+        </section>
+
+        <section class="section">
+            <h2>RESULTS AND DISCUSSION</h2>
+
+            <h3>Before dropping reverse_mortgage and open_end_line_of_credit:</h3>
+            <ul>
+                <li>Accuracy: 0.9460433664915614</li>
+                <li>F1 Score: 0.9668908237343584</li>
+                <li>ROC AUC Score: 0.9895407578939557</li>
+            </ul>
+
+            <p><strong>Classification Report:</strong></p>
+            <pre>
+precision    recall  f1-score   support
+
+    0       0.75      0.99      0.85     28627
+    1       1.00      0.94      0.97    150313
+
+accuracy                           0.95    178940
+macro avg       0.87      0.96      0.91    178940
+weighted avg    0.96      0.95      0.95    178940
+            </pre>
+
+            <div class="gantt-container">
+                <img src="midterm images/confusion matrix 1.png" alt="Confusion matrix before dropping features">
+            </div>
+
+            <div class="gantt-container">
+                <img src="midterm images/ROC curve 1.png" alt="ROC curve before dropping features">
+            </div>
+
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.0109</li>
+                <li>Disparate Impact Ratio: 0.9863</li>
+            </ul>
+
+            <h4>Fairness Metrics for 'applicant_sex' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.0128</li>
+                <li>Disparate Impact Ratio: 0.9839</li>
+            </ul>
+
+            <div class="gantt-container">
+                <img src="midterm images/predicted loan acceptance by race 1.png" alt="Loan acceptance prediction by race (before)">
+            </div>
+
+            <h3>After dropping reverse_mortgage and open_end_line_of_credit:</h3>
+            <ul>
+                <li>Accuracy: 0.7260198949368504</li>
+                <li>F1 Score: 0.817997549838512</li>
+                <li>ROC AUC Score: 0.7881808178848329</li>
+            </ul>
+
+            <p><strong>Classification Report:</strong></p>
+            <pre>
+precision    recall  f1-score   support
+
+    0       0.33      0.69      0.45     28627
+    1       0.93      0.73      0.82    150313
+
+accuracy                           0.73    178940
+macro avg       0.63      0.71      0.63    178940
+weighted avg    0.83      0.73      0.76    178940
+            </pre>
+
+            <div class="gantt-container">
+                <img src="midterm images/confusion matrix 2.png" alt="Confusion matrix after dropping features">
+            </div>
+
+            <div class="gantt-container">
+                <img src="midterm images/ROC curve 2.png" alt="ROC curve after dropping features">
+            </div>
+
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.3400</li>
+                <li>Disparate Impact Ratio: 0.6299</li>
+            </ul>
+
+            <h4>Fairness Metrics for 'applicant_sex' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.1611</li>
+                <li>Disparate Impact Ratio: 0.7820</li>
+            </ul>
+
+            <div class="gantt-container">
+                <img src="midterm images/predicted loan acceptance by race 2.png" alt="Loan acceptance prediction by race (after)">
+            </div>
+
+            <h3>Results and Performance Discussion</h3>
+            <p>Our Logistic Regression model achieved an accuracy of 72.6%, doing a moderate job of predicting loan approvals and denials, with some room for improvement. The F1-score of 81.8% suggests that the model balances between precision and recall.</p>
+
+            <p>The model struggles with denied loans (class 0) as it correctly identifies them only 33% of the time (precision), though it catches 69% of actual denials (recall). Therefore it is prone to incorrectly approving applications that should have been denied. On the other hand, for approved loans (class 1), it’s more confident: 93% precision means most approvals are correctly classified, but the 73% recall shows that it still misses some valid approvals.</p>
+
+            <p>The ROC AUC score of 0.79 tells us that while the model is better than random guessing, it still struggles to cleanly separate approvals from denials. Beyond accuracy, fairness is another major concern. Looking at the fairness metrics, we see significant disparities across demographic groups. Loan approvals are less likely for non-privileged racial groups (Disparate Impact Ratio = 0.63, below the 0.8 fairness threshold). Gender disparities also exist (DIR = 0.78), with lower approval rates for one gender. The Demographic Parity Differences (-0.34 for race, -0.16 for sex) confirm unequal treatment.</p>
+
+            <p>Overall, while the model performs well in identifying approvals, it struggles with fairness and denied loan predictions. Visual tools like ROC curves, confusion matrices, and fairness comparisons help clarify where improvement is needed.</p>
+        </section>
+
+        <section class="section">
+            <h2>NEXT STEPS</h2>
+            <p>Based on how sensitive the model performance and fairness were to feature selection, our next steps will focus on refining both our preprocessing and evaluation approaches.</p>
+
+            <ul>
+                <li><strong>Reassess Feature Selection:</strong> We'll take a closer look at the features we removed and run experiments to see how they impact the model—both on their own and in combination with other variables. Instead of only using correlation thresholds, we’ll try model-driven methods like recursive feature elimination and permutation importance to see which features matter most.</li>
+                <li><strong>Restore Key Features:</strong> The performance drop after removing <code>reverse_mortgage</code> and <code>open_end_line_of_credit</code> shows these features likely provide important information. We’ll bring these features back into the model and check if doing so improves both predictive accuracy and fairness.</li>
+                <li><strong>Expand Fairness Analysis:</strong> While we’ll keep evaluating demographic parity, we’ll add other fairness metrics such as equal opportunity difference and average odds difference to get a more comprehensive understanding of any biases in the model.</li>
+                <li><strong>Introduce Additional Models:</strong> To establish stronger baselines, we plan to experiment with ensemble methods like Random Forests and Gradient Boosting. These models might offer better performance while maintaining fairness.</li>
+                <li><strong>Evaluate Unsupervised Learning:</strong> In the next phase, we’ll explore unsupervised learning methods like clustering to uncover hidden patterns in the data. This can guide fairness-aware preprocessing by highlighting groups that may not be reflected in demographic features but still impact loan decisions.</li>
+            </ul>
+
+            <p>These steps will help us create a more balanced model pipeline—one that maintains predictive accuracy while also addressing fairness concerns.</p>
+        </section>
+
+        <section class="section">
+            <h2>GANTT CHART</h2>
+            <div class="gantt-container">
+                <img src="midterm images/ML spring 2025 midterm checkpoint plan.png" alt="Midterm Gantt Chart">
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>TEAM CONTRIBUTIONS</h2>
+
+            <h3>Aarthi</h3>
+            <ul>
+                <li>Wrote the introduction, background, dataset overview, problem definition, and project motivation.</li>
+                <li>Developed the Logistic Regression evaluation model.</li>
+                <li>Wrote the ML model selection section and added clarity to preprocessing/methodology.</li>
+                <li>Provided support and feedback for other sections and structured the final layout.</li>
+            </ul>
+
+            <h3>Suhana</h3>
+            <ul>
+                <li>Led data preprocessing, including missing value handling and feature engineering.</li>
+                <li>Developed performance/fairness visualizations.</li>
+                <li>Implemented and evaluated Logistic Regression.</li>
+                <li>Collaborated across all sections to ensure consistency.</li>
+            </ul>
+
+            <h3>Divya</h3>
+            <ul>
+                <li>Handled preprocessing, dimensionality reduction, and standardization.</li>
+                <li>Wrote the Results, Discussion, and References sections.</li>
+                <li>Analyzed fairness and performance metrics.</li>
+            </ul>
+
+            <h3>Hussein</h3>
+            <ul>
+                <li>Debugged preprocessing steps and helped engineer features.</li>
+                <li>Helped build and evaluate Logistic Regression model.</li>
+                <li>Wrote first draft of Results and Next Steps.</li>
+                <li>Updated the Gantt chart and GitHub Pages navigation.</li>
+            </ul>
+
+            <h3>Trisha</h3>
+            <ul>
+                <li>Worked on data cleaning, feature engineering, and model training.</li>
+                <li>Implemented dimensionality reduction techniques.</li>
+                <li>Evaluated model performance and supported team writing/editing.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>REFERENCES</h2>
+            <ol>
+                <li>R. Bartlett, A. Morse, R. Stanton, and N. Wallace, “Consumer-lending discrimination in the FinTech Era,” <em>Journal of Financial Economics</em>, vol. 143, no. 1, pp. 30–56, 2022. <a href="https://doi.org/10.1016/j.jfineco.2021.05.047" target="_blank">Link</a></li>
+                <li>M.S.A. Lee and L. Floridi, “Algorithmic Fairness in Mortgage Lending,” <em>Minds & Machines</em>, vol. 31, pp. 165–191, 2021. <a href="https://doi.org/10.1007/s11023-020-09529-4" target="_blank">Link</a></li>
+                <li>B. Zhang, B. Lemoine, and M. Mitchell, “Mitigating Unwanted Biases with Adversarial Learning,” <em>Proc. of AIES '18</em>, pp. 335–340, 2018. <a href="https://doi.org/10.1145/3278721.3278779" target="_blank">Link</a></li>
+                <li>W. Bao, N. Lianju, and K. Yua, “Integration of unsupervised and supervised ML algorithms for credit risk assessment,” <em>Expert Systems with Applications</em>, vol. 128, pp. 301–315, 2019. <a href="https://doi.org/10.1016/j.eswa.2019.02.033" target="_blank">Link</a></li>
+                <li>“Factor analysis of mixed data,” Prince library, accessed Mar. 31, 2025. <a href="https://maxhalford.github.io/prince/famd/" target="_blank">Link</a></li>
+            </ol>
+        </section>
+    </main>
+</body>
+</html>
