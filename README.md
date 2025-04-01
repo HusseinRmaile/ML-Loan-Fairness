@@ -10,15 +10,18 @@ This repository contains our midterm project for Spring 2025, analyzing loan app
 
 ### **Midterm Report**
 - **`ML_spring_2025_midterm_checkpoint_plan.pdf/png`** – Gantt Chart for Midterm.
+
+
+### **Initial Report**
 - **`ML_spring_2025_plan.pdf/png/xlsx`** – Initial project planning documents, including Gantt chart and milestones.
 
 ### **Web-Based Report Viewer**
 The HTML files in this repository serve as an **interactive report viewer**, allowing users to navigate between different reports using JavaScript-powered buttons.
 
-- **`index.html`** – Main landing page for the project report.
 - **`midterm.html`** – Midterm report in an interactive format.
 - **`styles.css`** – Stylesheet for report formatting.
 - **`script.js`** – JavaScript to enable navigation between different report sections.
+- **`index.html`** – Main landing page for initial project report
 
 ## **Usage**
 To view the midterm report interactively:
