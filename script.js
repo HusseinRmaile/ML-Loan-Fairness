@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const proposalButton = document.getElementById("btn-proposal");
     const midtermButton = document.getElementById("btn-midterm");
-    const finalButton = document.getElementById("btn-midterm");
+    const finalButton = document.getElementById("btn-final");
 
     proposalButton.addEventListener("click", () => {
         window.location.href = "index.html";  // proposal button
