@@ -18,58 +18,439 @@
 
     <!-- Page Header -->
     <header>
-        <h1>CS4641 Project Final Report</h1>
-        <h2>Fair & Accurate Loan Approval Models</h2>
-        <h4>Spring 2025 - Group 27</h4>
+        <h1>Fair & Accurate Loan Approval Models</h1>
+        <h2>Final Report</h2>
+        <h4>ML 4641 Spring 2025 - Group 27</h4>
         <p>Aarthi Kannan, Trisha Nittala, Hussein Rmaile, Divya Sharma, Suhana Shirol</p>
     </header>
 
     <main>
-        <!-- SECTION TEMPLATES GO HERE -->
-
         <section class="section">
             <h2>BACKGROUND</h2>
-            <!-- Replace with your actual final background content -->
+        
+            <h3>Introduction</h3>
+            <p>Algorithmic decision-making in the financial sector has become increasingly prevalent, particularly in credit risk assessment and loan approval processes. While these systems promise efficiency and scalability, they also raise concerns about fairness, transparency, and accountability, especially when models learn from historical data that may embed systemic biases. In high-stakes domains such as mortgage lending, unfair or biased predictions can have significant social consequences, reinforcing existing inequalities and denying opportunities to already marginalized groups.</p>
+        
+            <h3>Literature Review</h3>
+            <p>Recent research has focused on quantifying and mitigating these algorithmic biases. Lee and Floridi [2] explore the ethical challenges of algorithmic fairness in mortgage lending, arguing that fairness metrics, while useful, cannot fully capture the complexities of discrimination. They emphasize the need for holistic approaches that address structural biases embedded within datasets. Their work highlights the difficult trade-offs between optimizing for accuracy and achieving fairness.</p>
+        
+            <p>Zhang et al. [3] propose adversarial training as a promising mitigation strategy. Their method involves a secondary model that penalizes unfair predictions, allowing the primary classifier to maintain its accuracy while reducing discriminatory behavior.</p>
+        
+            <p>In a complementary study, Bao et al. [4] demonstrate that hybrid models that integrate supervised and unsupervised learning outperform traditional models in predicting credit risk. They suggest that combining these predictive techniques with fairness-aware methods could lead to more balanced and equitable algorithms.</p>
+        
+            <h3>Dataset Description</h3>
+            <p>To explore the impact of fairness-aware machine learning in financial decision-making, we use the Snapshot National Loan-Level Dataset from the Home Mortgage Disclosure Act (HMDA) publication. This dataset provides comprehensive information on mortgage loan applications across the United States, including features such as applicant income, loan amount, credit score, loan type, property location, and demographic attributes like race, gender, and ethnicity. These features are essential not only for evaluating creditworthiness but also for assessing fairness and potential bias in loan approval decisions.</p>
+        
+            <p>We specifically selected data outside of the 2019–2021 period to avoid the distortions caused by the COVID-19 pandemic. During this time, mortgage lending practices were significantly impacted by emergency government policies, fluctuating interest rates, and unpredictable economic behavior. As a result, the patterns in loan approvals and denials may not reflect typical lending dynamics, which could skew model performance and fairness evaluations.</p>
+        
+            <p><strong>Dataset Link:</strong> <a href="https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2022" target="_blank">Snapshot National Loan-Level Dataset (2022)</a></p>
+        </section>
+
+        <section class="section">
+            <h2>PROBLEM DEFINITION AND MOTIVATION</h2>
+        
+            <h3>Problem Definition</h3>
+            <p>Machine learning models are increasingly used in financial lending to automate loan approval decisions. However, these models often inherit and amplify historical biases embedded in the data, disproportionately impacting marginalized communities such as racial minorities, immigrants, and older applicants. These biases manifest in higher rejection rates and less favorable loan terms, contributing to systemic financial exclusion. For instance, Latinx and Black borrowers collectively pay over $450 million more in interest annually compared to white borrowers [1].</p>
+        
+            <p>Even in competitive lending markets, bias persists due to institutional incentives that prioritize short-term profitability over long-term fairness. Traditional credit scoring systems further reinforce inequities by reflecting discriminatory practices of the past. Despite regulatory frameworks like the Equal Credit Opportunity Act (ECOA) and Fair Lending Laws, algorithmic lending systems continue to produce unfair outcomes. This undermines trust in automated financial tools and deepens socioeconomic disparities.</p>
+        
+            <p>Addressing these issues is essential. Our project aims to build fairness-aware loan approval models that retain predictive power while reducing bias. We incorporate fairness strategies throughout the machine learning pipeline, from data preprocessing and model selection to fairness metrics and evaluation. By doing so, we promote equitable, transparent, and responsible lending practices in the age of automation.</p>
+        
+            <h3>Motivation</h3>
+            <p>Equitable access to credit is a cornerstone of financial inclusion and economic mobility. However, current lending models powered by machine learning often reinforce existing inequalities, especially when trained on biased historical data. This not only harms disadvantaged individuals but also exposes financial institutions to ethical, reputational, and regulatory risks.</p>
+        
+            <p>Our project is driven by the belief that predictive performance and fairness are not mutually exclusive. By developing interpretable and fairness-aware algorithms, we can ensure that lending decisions are not only accurate but also just. Through this approach, we seek to foster responsible AI adoption in finance, increase trust in algorithmic systems, and create meaningful pathways toward inclusive economic growth.</p>
         </section>
 
         <section class="section">
             <h2>METHODS</h2>
-            <!-- Replace with your actual final methods content -->
+        
+            <h3>Preprocessing</h3>
+            <p>To increase data quality and maintain predictive accuracy, we began preprocessing by removing features with more than 50% null values. The dropped features included loan cost and fee-related fields such as <code>rate_spread</code>, <code>total_loan_costs</code>, <code>total_points_and_fees</code>, <code>origination_charges</code>, <code>discount_points</code>, <code>lender_credits</code>, <code>prepayment_penalty_term</code>, and <code>intro_rate_period</code>. The response variable, <code>action_taken</code>, was refined to represent loan approval or denial. Approved loans (1 – originated, 2 – approved but not accepted) were mapped to 1, while denied loans (3 – denied by the financial institution, 7 – preapproval request denied) were mapped to 0, with all other action codes dropped.</p>
+        
+            <p>For consistency, we focused on first-lien, 1–4 unit, owner-occupied, site-built, fully amortizing conventional loans intended for home purchase, home refinancing, and cash-out refinancing. We also consolidated co-applicant features by introducing a binary <code>has_co_applicant</code> flag, where 1 indicated the presence of a co-applicant and 0 indicated none. Other co-applicant demographic features, such as <code>co_applicant_credit_score_type</code>, <code>co_applicant_ethnicity_1</code>, <code>co_applicant_race_1</code>, and <code>co_applicant_sex</code>, were removed. Observed demographic features (<code>applicant_race_observed</code>, <code>applicant_ethnicity_observed</code>, <code>applicant_sex_observed</code>) were also dropped to mitigate potential bias.</p>
+        
+            <p>As part of preprocessing, we addressed missing values in the <code>interest_rate</code> field by imputing them based on related financial context. Specifically, we grouped rows by <code>debt_to_income_ratio</code> and computed the median interest rate within each group. Missing interest rate values were then imputed using the corresponding group median. This method preserved the relationship between debt burden and borrowing cost, ensuring realistic and context-aware imputations.</p>
+        
+            <p>Throughout the data cleaning and transformation process, we performed correlation analysis, which revealed weak positive correlations among features, and a chi-square test, which indicated a statistically significant relationship: loan approval rates were higher when demographic features were not recorded based on observation.</p>
+        
+            <p>We remapped <code>conforming_loan_limits</code> to numerical values and converted <code>total_units</code> to an integer data type. Loans marked as "Exempt" or "NA" for <code>debt_to_income_ratio</code> were removed since their approval did not rely on DTI. Non-natural borrowers (<code>applicant_age = 8888</code> or <code>9999</code>) were also excluded. Race, ethnicity, sex, and age values were standardized for consistency. Missing <code>census_tract</code> and <code>county_code</code> values were imputed using <code>msa_md</code>, and <code>income</code> was imputed based on <code>ffiec_msa_md_median_family_income</code>, with outliers addressed using the Interquartile Range (IQR) method. Property value outliers were handled via median imputation within census tracts, followed by a log transformation.</p>
+        
+            <p>Feature selection involved evaluating discrete numerical features, dropping those with a correlation coefficient below 0.01 with <code>action_taken</code> (<code>lei</code>, <code>purchaser_type</code>, <code>open_end_line_of_credit</code>, <code>submission_of_application</code>, <code>reverse_mortgage</code>, <code>business_or_commercial_purpose</code>, <code>initially_payable_to_institution</code>, <code>balloon_payment</code>, and <code>conforming_loan_limit</code>). We derived credit and employment history insights from denial reasons, imputed missing values for key financial metrics (<code>income</code>, <code>debt_to_income_ratio</code>, <code>loan_to_value_ratio</code>, <code>applicant_age_above_62</code>, <code>applicant_age</code>, <code>property_value</code>, <code>loan_amount</code>, <code>loan_term</code>, <code>census_tract</code>, <code>county_code</code>), and evaluated potential bias indicators by analyzing demographic factors. Finally, we estimated <code>monthly_payments</code> using <code>loan_term</code>, <code>loan_amount</code>, and <code>interest_rate</code> to enhance predictive modeling.</p>
+        
+            <p><strong>Applicant ethnicity observed:</strong> Chi-Square Statistic: 3936656.022241422, p-value: 0.0</p>
+            <p><strong>Applicant race observed:</strong> Chi-Square Statistic: 3810281.3849771465, p-value: 0.0</p>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/loan approval rates by race observation status 1.png" alt="Loan approval rates by race observation status">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/loan approval rates by ethnicity observation status 1.png" alt="Loan approval rates by ethnicity observation status">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/loan approval rates by sex observation status 1.png" alt="Loan approval rates by sex observation status">
+            </div>
+        
+            <p>There is a slight difference between approval rates when demographic data is observed rather than self-reported. To have a less biased model, it would be better to exclude these rows.</p>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/loan approval rates by sex 1.png" alt="Loan approval rates by sex">
+            </div>
+        
+            <h3>Pre outlier income dist:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre outlier income dist 1.png" alt="Income distribution before outlier handling">
+            </div>
+        
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre outlier income dist 2.png" alt="Income distribution after IQR method">
+            </div>
+            <p>Used IQR approach because data was right-skewed with negative values.</p>
+        
+            <h3>Pre outlier handling property value:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre outlier handling property value 1.png" alt="Property value before handling">
+            </div>
+        
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre outlier handling property value 2.png" alt="Property value after log transformation">
+            </div>
+            <p>Used log transformation.</p>
+        
+            <h3>Pre loan amount outlier handling:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre loan amount outlier handling 1.png" alt="Loan amount before handling">
+            </div>
+            <p>Used log transformation.</p>
+        
+            <h3>After:</h3>
+            <div class="gantt-container">
+                <img src="final checkpoint images/pre loan amount outlier handling 2.png" alt="Loan amount after log transformation">
+            </div>
+        
+            <h3>ML Models Implemented</h3>
+            <p>For this project, we implemented a Logistic Regression model, a classic supervised learning algorithm suitable for binary classification tasks. The goal was to predict whether a loan application would be approved or denied based on applicant, loan, and property-related features from the 2018 HMDA dataset.</p>
+        
+            <p>Addressed missing values using context-specific imputations (e.g., income imputed from FFIEC metro median income, interest rates imputed by grouping on debt-to-income ratio).</p>
+        
+            <p>Logistic Regression was selected due to its simplicity, interpretability, and efficiency when working with high-dimensional, tabular data. The model serves as a strong baseline for evaluating the predictive signal in the features and provides coefficients that help assess the relative importance of inputs. This approach aligns with the supervised learning techniques taught in this class.</p>
+        
+            <p>Model performance was evaluated using accuracy, F1 score, ROC AUC, and a confusion matrix, with results to be discussed in the next section.</p>
+        
+            <p>In addition, we also implemented a Naive Bayes model to explore an alternative, probabilistic approach to our loan approval prediction task. Once again, the goal was to predict whether a loan application would be approved or denied based on applicant, loan, and property-related features from the 2018 HMDA dataset.</p>
+        
+            <p>Naive Bayes was selected for its computational efficiency, simplicity, and its suitability for scenarios where conditional independence among features can be reasonably assumed. Unlike Logistic Regression, which uses coefficients to explicitly indicate how each feature contributes to the outcome, Naive Bayes provides transparency by calculating the probabilities of each feature given the target class, offering an intuitive understanding of how likely certain feature values are associated with loan approval or denial.</p>
+        
+            <p>Model performance was evaluated using accuracy, F1 score, ROC AUC, and a confusion matrix, with results to be discussed in the next section.</p>
+        
+            <p>To further evaluate the fairness-performance tradeoff, we implemented a Stochastic Gradient Descent (SGD) classifier, a linear model trained using mini-batches. Unlike standard Logistic Regression, the SGDClassifier uses incremental updates, making it well-suited for large datasets like HMDA. We used hinge and log loss functions, tuned the learning rate, and limited epochs to reduce overfitting. Although the predictive performance was slightly lower compared to Logistic Regression, the model showed improved fairness, indicating the potential of SGD-based models in reducing disparity across demographic groups.</p>
+        
+            <p>Model performance was evaluated using accuracy, F1 score, ROC AUC, and a confusion matrix, with results to be discussed in the next section.</p>
+        
+            <p>All models implemented - Logistic Regression, Naive Bayes, and SGD - are supervised learning algorithms appropriate for binary classification tasks.</p>
+
+            <h3>Justification</h3>
+            <p>Logistic Regression was chosen as the primary model for this project because it strikes an ideal balance between interpretability, efficiency, and predictive power for structured, tabular data such as the HMDA loan application records. The goal of the project was not just to predict whether a loan would be approved or denied, but also to understand which features (e.g., income, loan amount, debt-to-income ratio) most influence that outcome. Logistic Regression is inherently interpretable as the model’s coefficients offer direct insights into the direction and strength of each feature’s impact on loan approval. This is particularly important in the financial domain, where explainability is crucial for auditing and ethical considerations. Additionally, the binary nature of the target variable (approved vs. denied) makes logistic regression a natural fit.</p>
+
+            <p>The model performs well under conditions where features are linearly related to the log-odds of the outcome which is a reasonable assumption after the thorough preprocessing and feature engineering we applied. Compared to more complex models, Logistic Regression is also less prone to overfitting on smaller or moderately sized datasets, and its simplicity allowed us to quickly iterate, validate, and extend the model with fairness metrics. Overall, it was a strategically sound and academically aligned choice for building a reliable, explainable baseline in the context of supervised learning and real-world decision modeling.</p>
+
+            <p>Naive Bayes was chosen as an additional model for this project because it complements Logistic Regression by providing a distinct yet valuable interpretative perspective. Similar to Logistic Regression, Naive Bayes is well-suited to structured, tabular data such as the HMDA loan application records, offering a blend of computational efficiency, simplicity, and predictive capability. Unlike Logistic Regression, which achieves interpretability through coefficients reflecting the direction and magnitude of each feature’s influence, Naive Bayes provides transparency through a direct probabilistic interpretation of feature distributions. This transparency is particularly advantageous in financial contexts, where clear and intuitive explanations of predictions are vital for regulatory compliance, ethical considerations, and stakeholder communication. Its probabilistic nature allows for rapid iteration and straightforward analysis of how individual attributes (e.g., income, loan amount, debt-to-income ratio) independently contribute to loan approval predictions. Incorporating Naive Bayes thus enriched the analytical framework of our project by adding clarity through probabilistic insights, complementing the baseline established by Logistic Regression.</p>
+
+            <p>Stochastic Gradient Descent (SGD) was chosen as a third model in our project because it offers a scalable and flexible approach to classification, particularly suited for large, high-dimensional datasets like HMDA. Unlike more traditional classifiers, the SGDClassifier supports incremental updates through mini-batch learning, making it memory-efficient and well-suited for real-time or large-scale deployment scenarios. Its ability to optimize a variety of loss functions (such as hinge and log loss) and incorporate different regularization strategies provides significant flexibility for tuning model behavior. This flexibility is especially useful when seeking a balance between predictive accuracy and ethical considerations, as SGD allows for controlled constraint of model complexity through regularization. While it is still a linear model like Logistic Regression, its training mechanism introduces more opportunities for tuning and adaptation during the learning process. In fairness-sensitive domains such as financial lending, this tunability is valuable when exploring tradeoffs between interpretability, model simplicity, and the need for equitable treatment. By incorporating the SGDClassifier into our study, we expanded our model comparison to include an approach that emphasizes scalability and tunability, both of which are essential when building practical, fairness-aware systems in real-world contexts.</p>
+
+        </section>        
+        
+        <section class="section">
+            <h2>RESULTS AND DISCUSSION</h2>
+        
+            <h3>Logistic Regression</h3>
+            <p><strong>Before dropping <code>reverse_mortgage</code> and <code>open_end_line_of_credit</code>:</strong></p>
+            <ul>
+                <li>Accuracy: 0.9460433664915614</li>
+                <li>F1 Score: 0.9668908237343584</li>
+                <li>ROC AUC Score: 0.9895407578939557</li>
+            </ul>
+        
+            <p><strong>Classification Report:</strong></p>
+            <pre>
+                       precision    recall  f1-score   support
+        
+            0          0.75        0.99      0.85      28627
+            1          1.00        0.94      0.97     150313
+        
+            accuracy                          0.95     178940
+            macro avg     0.87        0.96      0.91     178940
+            weighted avg  0.96        0.95      0.95     178940
+            </pre>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/confusion matrix 1.png" alt="Confusion matrix (before feature drop)">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/ROC curve 1.png" alt="ROC curve (before feature drop)">
+            </div>
+        
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.0109</li>
+                <li>Disparate Impact Ratio: 0.9863</li>
+            </ul>
+        
+            <h4>Fairness Metrics for 'applicant_sex' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.0128</li>
+                <li>Disparate Impact Ratio: 0.9839</li>
+            </ul>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/predicted loan acceptance by race 1.png" alt="Predicted loan acceptance by race (before)">
+            </div>
+        
+            <p><strong>After dropping <code>reverse_mortgage</code> and <code>open_end_line_of_credit</code>:</strong></p>
+            <ul>
+                <li>Accuracy: 0.7260198949368504</li>
+                <li>F1 Score: 0.817997549838512</li>
+                <li>ROC AUC Score: 0.7881808178848329</li>
+            </ul>
+        
+            <p><strong>Classification Report:</strong></p>
+            <pre>
+                       precision    recall  f1-score   support
+        
+            0          0.33        0.69      0.45      28627
+            1          0.93        0.73      0.82     150313
+        
+            accuracy                          0.73     178940
+            macro avg     0.63        0.71      0.63     178940
+            weighted avg  0.83        0.73      0.76     178940
+            </pre>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/confusion matrix 2.png" alt="Confusion matrix (after feature drop)">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/ROC curve 2.png" alt="ROC curve (after feature drop)">
+            </div>
+        
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.3400</li>
+                <li>Disparate Impact Ratio: 0.6299</li>
+            </ul>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/predicted loan acceptance by race 2.png" alt="Predicted loan acceptance by race (after)">
+            </div>
+        
+            <h3>Naive Bayes</h3>
+            <ul>
+                <li>Accuracy: 0.6833575500167653</li>
+                <li>F1 Score: 0.7905468848192699</li>
+                <li>ROC AUC Score: 0.6765712322724373</li>
+            </ul>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/confusion matrix naive bayes.png" alt="Naive Bayes confusion matrix">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/roc curve naive bayes.png" alt="Naive Bayes ROC curve">
+            </div>
+        
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.3035</li>
+                <li>Disparate Impact Ratio: 0.6622</li>
+            </ul>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/predicted loan acceptance by race naive bayes.png" alt="Naive Bayes loan acceptance by race">
+            </div>
+        
+            <h3>Stochastic Gradient Descent Classifier (SGDClassifier)</h3>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/sgd acceptance rate by race.png" alt="SGD acceptance rate by race">
+            </div>
+        
+            <h4>Fairness Metrics for 'race' (privileged = 1):</h4>
+            <ul>
+                <li>Demographic Parity Difference: -0.0306</li>
+                <li>Disparate Impact Ratio: 0.9414</li>
+            </ul>
+        
+            <p><strong>Final Evaluation Metrics:</strong></p>
+            <ul>
+                <li>Accuracy: 0.6599828620394174</li>
+                <li>F1 Score: 0.7462591124184679</li>
+                <li>ROC AUC Score: 0.99037664587791</li>
+            </ul>
+        
+            <p>Lower accuracy, improved fairness</p>
+        
+            <div class="gantt-container">
+                <img src="final checkpoint images/confusion matrix sgd.png" alt="SGD confusion matrix">
+            </div>
+            <div class="gantt-container">
+                <img src="final checkpoint images/roc curve sgd.png" alt="SGD ROC curve">
+            </div>
+        
+            <h3>Results and Performance Discussion</h3>
+            <p><strong>MODEL COMPARISON TABLE:</strong></p>
+            <pre>
+        MODEL               ACCURACY     F1 SCORE    ROC AUC    DEMOGRAPHIC PARITY (RACE)    DISPARATE IMPACT (RACE)
+        Logistic Regression     72.6%       81.8%       0.788              -0.3400                      0.6299
+        Naive Bayes             68.3%       79.1%       0.676              -0.3035                      0.6622
+        SGD Classifier          66.0%       74.6%       0.990              -0.0306                      0.9414
+            </pre>
+        
+            <p>This comparison table highlights the tradeoff between performance and fairness. While Logistic Regression achieves the highest predictive accuracy, the SGDClassifier exhibits the strongest fairness metrics, suggesting that reducing bias may require sacrificing a degree of predictive performance.</p>
+
+            <h3>Full Discussion</h3>
+            <p>Our Logistic Regression model achieved an accuracy of 72.6%, doing a moderate job of predicting loan approvals and denials, with some room for improvement. The F1-score of 81.8% suggests that the model balances between precision and recall.</p>
+        
+            <p>The model struggles with denied loans (class 0) as it correctly identifies them only 33% of the time (precision), though it catches 69% of actual denials (recall). Therefore it is prone to incorrectly approving applications that should have been denied.</p>
+        
+            <p>On the other hand, for approved loans (class 1), it’s more confident: 93% precision means most approvals are correctly classified, but the 73% recall shows that it still misses some valid approvals. The macro average F1-score of 63% confirms the imbalance that the model performs noticeably better on approvals than denials. The ROC AUC score of 0.79 tells us that while the model is better than random guessing, it still struggles to cleanly separate approvals from denials. Beyond accuracy, fairness is another major concern. Looking at the fairness metrics, we see significant disparities across demographic groups: Loan approvals are less likely for non-privileged racial groups, with a Disparate Impact Ratio of 0.63 which is below the fairness threshold of 0.8. Gender disparities also exist, with a Disparate Impact Ratio of 0.78, meaning one gender sees lower approval rates. The Demographic Parity Differences (-0.34 for race, -0.16 for sex) confirm that the model isn’t treating all groups equally.</p>
+        
+            <p>Overall, while the model is decent at predicting loan approvals, it has trouble correctly identifying denials and introduces fairness issues, disproportionately impacting certain groups.</p>
+        
+            <p>To get a clearer picture, visualizing metrics like ROC curves, confusion matrices, and fairness comparisons can help us see where it’s going wrong.</p>
+        
+            <p>Our model performed well largely because mortgage lending decisions follow clear-cut financial rules that are easy for a classification model to learn. The mortgage industry relies on well-defined underwriting criteria, such as credit scores, income, debt-to-income ratio, and loan-to-value ratio, which are strong, structured predictors of loan approval. Since these financial factors have a direct impact on lending decisions, they provide a clear decision-making framework that aligns well with a model like Logistic Regression. Additionally, we conducted extensive data preprocessing to clean and structure the dataset, including handling missing values, engineering new features, and standardizing key financial metrics. With a large and structured dataset (2018 HMDA dataset, nearly 180,000 applications), the model had ample examples to learn patterns in past approvals and denials, allowing it to perform well overall despite some limitations in correctly identifying denials and fairness disparities.</p>
+        
+            <p>Our Naive Bayes model achieved an accuracy of 68.3%, indicating reasonable predictive capability but lower performance than the Logistic Regression model. The F1-score of 79.1% suggests that it effectively balances precision and recall. The confusion matrix reveals the model struggles with accurately classifying denied loans (class 0), correctly identifying only 54% of these cases, resulting in a high rate of false approvals. Conversely, it performs better with approved loans (class 1), achieving a higher accuracy rate of 71%, though there remains considerable room for improvement.</p>
+        
+            <p>The ROC AUC score of 0.68 suggests that while the Naive Bayes model is moderately effective and certainly better than random guessing, it has difficulty clearly distinguishing between approved and denied loans. Furthermore, significant fairness concerns are present: the model's predictions disproportionately favor privileged racial groups, resulting in a Disparate Impact Ratio of 0.66, below the fairness threshold of 0.8. The Demographic Parity Difference of -0.30 confirms substantial bias, highlighting that certain racial groups receive considerably lower loan approval rates.</p>
+        
+            <p>Overall, the Naive Bayes model's simplicity allowed quick analysis and interpretability through probabilistic insights, yet it notably underperforms Logistic Regression in predictive accuracy and fairness. Visualizations like the ROC curve, confusion matrix, and acceptance rates by race clearly illustrate the model’s limitations, underscoring the importance of further refinement and fairness-aware feature engineering.</p>
+        
+            <p>Our SGDClassifier achieved the lowest overall accuracy at 66.0%, with an F1 score of 74.6%. Despite this lower predictive performance, the model's ROC AUC score of 0.99 stands out as the highest among all models, indicating that it ranks positive instances very well, even though its threshold-based classification could be improved. This suggests that the model captures meaningful patterns in the data but may require better threshold tuning or post-processing calibration to increase precision and recall balance.</p>
+        
+            <p>The model performed moderately on denied loans (class 0), identifying a reasonable number of true negatives but still generating false positives. On approved loans (class 1), performance was relatively stable but not as strong as Logistic Regression. The lower accuracy and F1 score reflect a more conservative classifier that avoids aggressive classification in borderline cases — likely a result of regularization and incremental updates inherent in SGD.</p>
+        
+            <p>Where SGDClassifier shines is in fairness. With a Demographic Parity Difference of just -0.0306 and a Disparate Impact Ratio of 0.9414, the model significantly outperforms both Logistic Regression and Naive Bayes in terms of equitable treatment across racial groups. These values approach commonly accepted fairness thresholds, showing that SGD greatly reduces the disparity in approval rates between privileged and non-privileged groups. This improvement likely results from the simpler linear decision boundary paired with high regularization, which discourages the model from relying too heavily on any single demographic or financial attribute.</p>
+        
+            <p>Overall, while the SGDClassifier does not lead in predictive accuracy, it represents the fairest model in our study. It demonstrates that a tradeoff exists between fairness and accuracy, but that the gap can be narrowed through optimization strategies and careful regularization. Its scalability, simplicity, and fairness performance make SGD an excellent candidate for real-world, fairness-aware deployment, especially in sensitive domains like financial lending, where ethical implications are just as important as predictive power.</p>
+        
+            <p>When compared directly, Logistic Regression clearly leads in raw predictive performance, while SGDClassifier excels in fairness. Naive Bayes sits between the two, offering moderate performance and slightly improved fairness over Logistic Regression. The ROC AUC of the SGD model (0.99) stands out, but its accuracy and F1 score are lower - suggesting that despite its ranking ability, its classification threshold may need adjustment. In contrast, Logistic Regression provides strong predictive metrics but suffers from the greatest demographic disparities. These side-by-side results highlight the inherent tension between fairness and accuracy, reinforcing the need to weigh ethical considerations alongside model performance in high-stakes domains like mortgage lending.</p>
+        
+            <p>These findings illustrate a key tradeoff: models that optimize for performance tend to preserve or amplify existing disparities, while models optimized for fairness may sacrifice accuracy. This tension is central to fairness-aware machine learning. The SGDClassifier offers a promising direction for improving equity in automated lending systems, particularly given its scalability and tunability for large datasets like HMDA.</p>
+        
+            <p>Overall, this analysis confirms that no model is "best" across all dimensions. The ideal choice depends on the stakeholder's goals: maximizing precision, ensuring fairness, or finding a balance between the two.</p>
         </section>
 
         <section class="section">
-            <h2>RESULTS</h2>
-            <!-- Replace with your actual final results content -->
+            <h2>POTENTIAL NEXT STEPS</h2>
+        
+            <p>Based on how sensitive the model performance and fairness were to feature selection, our next steps will focus on refining both our preprocessing and evaluation approaches.</p>
+        
+            <ul>
+                <li><strong>Reassess Feature Selection:</strong> We'll take a closer look at the features we removed and run experiments to see how they impact the model, both on their own and in combination with other variables. Instead of only using correlation thresholds, we’ll try model-driven methods like recursive feature elimination and permutation importance to see which features matter most.</li>
+        
+                <li><strong>Restore Key Features:</strong> The performance drop after removing reverse_mortgage and open_end_line_of_credit shows these features likely provide important information. We’ll bring these features back into the model and check if doing so improves both predictive accuracy and fairness.</li>
+        
+                <li><strong>Expand Fairness Analysis:</strong> While we’ll keep evaluating demographic parity, we’ll add other fairness metrics such as equal opportunity difference and average odds difference to get a more comprehensive understanding of any biases in the model.</li>
+        
+                <li><strong>Introduce Additional Models:</strong> To establish stronger baselines, we plan to experiment with ensemble methods like Random Forests and Gradient Boosting. These models might offer better performance while maintaining fairness.</li>
+        
+                <li><strong>Evaluate Unsupervised Learning:</strong> In the next phase, we’ll explore unsupervised learning methods like clustering to uncover hidden patterns in the data. This can guide fairness-aware preprocessing by highlighting groups that may not be reflected in demographic features but still impact loan decisions.</li>
+        
+                <li><strong>Given the improved fairness observed with SGD, future work could explore hybrid approaches</strong> (e.g., ensemble SGD with fairness-aware loss functions) or fairness-constrained optimization to better balance performance and equity. We also plan to integrate these models into a decision pipeline that supports post-hoc interpretability and transparency audits.</li>
+            </ul>
+        
+            <p>These steps will help us create a more balanced model pipeline that maintains predictive accuracy while also addressing fairness concerns.</p>
         </section>
-
+        
         <section class="section">
-            <h2>DISCUSSION</h2>
-            <!-- Replace with your actual final discussion content -->
+            <h2>GANTT CHART</h2>
+            <div class="gantt-container">
+                <img src="final checkpoint images/ML spring 2025.png" alt="Final Project Plan Gantt Chart">
+            </div>
         </section>
-
-        <section class="section">
-            <h2>CONCLUSION</h2>
-            <!-- Replace with your actual final conclusion content -->
-        </section>
-
+        
         <section class="section">
             <h2>TEAM CONTRIBUTIONS</h2>
-            <!-- Copy structure from midterm for consistency -->
+        
+            <h3>Aarthi’s Contributions:</h3>
+            <ul>
+                <li>Wrote the introduction, background, dataset overview, problem definition, and project motivation, expanding from the original proposal to create a more focused and compelling narrative around the project goals and use of the HMDA dataset.</li>
+                <li>Developed the Logistic Regression evaluation model, including writing the full code for training, testing, and performance metrics.</li>
+                <li>Wrote the section on machine learning model selection, clearly explaining why Logistic Regression was chosen and how it was applied within the context of the project.</li>
+                <li>Edited and refined all other sections of the report, adding insight, justification, and clarity, particularly in areas such as data preprocessing and methodology.</li>
+                <li>Provided ongoing support and collaboration to teammates on their sections, offering feedback and suggestions where needed.</li>
+                <li>Completely analysed SGD and compared it to the rest of the models</li>
+                <li>Structured the report layout and formatting to ensure cohesion, readability, and alignment with all required elements for the final submission.</li>
+                <li>Made visualisation for comprehensive comparison (eg comparison tables, and graphs)</li>
+                <li>Created the full final slide deck for the final presentation</li>
+            </ul>
+        
+            <h3>Suhana’s Contributions:</h3>
+            <ul>
+                <li>Wrote introduction, literature review, and ML models section</li>
+                <li>Read various peer-reviewed papers in order to write literature review and added in-text citations across proposal</li>
+                <li>Wrote initial draft of model and evaluation metric justifications</li>
+                <li>Created references using IEEE format</li>
+                <li>Led data preprocessing, including handling missing values, feature engineering, and standardizing key metrics to prepare the dataset for modeling.</li>
+                <li>Created training and testing dataset ensuring all racial and gender groups were equally represented</li>
+                <li>Developed and implemented all visualizations analyzing model performance and interpreted key results, providing clear insights into feature importance, accuracy, and fairness metrics.</li>
+                <li>Implemented the Logistic Regression model, including code for training, testing, and evaluating performance metrics, ensuring robust model evaluation.</li>
+                <li>Implemented the SGD model, including code for training, testing, and evaluating performance metrics, ensuring robust model evaluation</li>
+                <li>Implemented the Naive Bayes model, including code for training, testing, and evaluating performance metrics, ensuring robust model evaluation</li>
+                <li>Collaborated with teammates, providing feedback and ensuring consistency across the report.</li>
+            </ul>
+        
+            <h3>Divya’s Contributions:</h3>
+            <ul>
+                <li>Implemented Naive Bayes model</li>
+                <li>Worked on editing report from midterm to final to showcase changes</li>
+                <li>Worked on developing presentation to make the project easy to understand</li>
+                <li>Collaborated with teammates, providing feedback and ensuring consistency across the report.</li>
+            </ul>
+        
+            <h3>Hussein’s Contributions:</h3>
+            <ul>
+                <li>Contributed to data preprocessing debugging, as well as feature engineering and standardization</li>
+                <li>Added SGD justification to justification section</li>
+                <li>Worked on logistic regression model</li>
+                <li>Wrote results/discussion section first draft</li>
+                <li>Wrote next steps section</li>
+                <li>Proofread all of the report and made edits for clarity</li>
+                <li>Ensured all necessary sections are present</li>
+                <li>Labeled ambiguous sections/graphs</li>
+                <li>Created new gantt chart to reflect updated progress and potential next steps</li>
+                <li>Transcribed the report/all our info from the google doc to html code</li>
+                <li>Wrote the javascript for the navigation bar, to switch between checkpoints</li>
+                <li>Wrote the CSS code for styling</li>
+                <li>Updated our github pages to include all final report docs</li>
+            </ul>
+        
+            <h3>Trisha’s Contributions:</h3>
+            <ul>
+                <li>Conducted data preprocessing, including handling missing values, feature engineering, and standardization.</li>
+                <li>Implemented dimensionality reduction to improve model efficiency and prevent overfitting.</li>
+                <li>Worked on the Logistic Regression model, including training, testing, and evaluating its performance.</li>
+                <li>Collaborated with teammates, providing feedback and ensuring consistency across the report.</li>
+                <li>Worked on Models and Results and Discussion section of the final report, updating it with the Naive Bayes results</li>
+            </ul>
         </section>
-
+        
         <section class="section">
             <h2>REFERENCES</h2>
             <ol class="references">
-                <!-- Add your final references here using the same [#] format -->
+                <li>R. Bartlett, A. Morse, R. Stanton, and N. Wallace, “Consumer-lending discrimination in the FinTech Era,” <em>Journal of Financial Economics</em> 143, no. 1, pp. 30–56, (2022). <a href="https://doi.org/10.1016/j.jfineco.2021.05.047" target="_blank">https://doi.org/10.1016/j.jfineco.2021.05.047</a></li>
+        
+                <li>M.S.A. Lee and L. Floridi, “Algorithmic Fairness in Mortgage Lending: from Absolute Conditions to Relational Trade-offs,” <em>Minds & Machines</em> 31, pp. 165–191 (2021). <a href="https://doi.org/10.1007/s11023-020-09529-4" target="_blank">https://doi.org/10.1007/s11023-020-09529-4</a></li>
+        
+                <li>B. Zhang, B. Lemoine and M. Mitchell, “Mitigating Unwanted Biases with Adversarial Learning,” <em>AIES ‘18: Proceedings of the 2018 AAAI/ACM Conference on AI, Ethics, and Society</em>, pp. 335–340 (2018). <a href="https://doi.org/10.1145/3278721.3278779" target="_blank">https://doi.org/10.1145/3278721.3278779</a></li>
+        
+                <li>W. Bao, N. Lianju and K. Yua, “Integration of unsupervised and supervised machine learning algorithms for credit risk assessment,” <em>Expert Systems with Applications</em> 128, pp. 301–315 (2019). <a href="https://doi.org/10.1016/j.eswa.2019.02.033" target="_blank">https://doi.org/10.1016/j.eswa.2019.02.033</a></li>
+        
+                <li>“Factor analysis of mixed data,” Prince, <a href="https://maxhalford.github.io/prince/famd/" target="_blank">https://maxhalford.github.io/prince/famd/</a> (accessed Mar. 31, 2025).</li>
             </ol>
         </section>
-
-        <section class="section">
-            <h2>FINAL GANTT CHART</h2>
-            <div class="gantt-container">
-                <img src="final images/final_gantt_chart.png" alt="Final Project Plan Gantt Chart">
-            </div>
-        </section>
+        
     </main>
 
 </body>
