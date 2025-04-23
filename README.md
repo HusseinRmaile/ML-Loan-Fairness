@@ -7,18 +7,24 @@ This repository contains our midterm project for Spring 2025, analyzing loan app
 ### **Notebooks**
 - **`HMDA_2018_preprocessing.ipynb`** – Data preprocessing, including handling missing values, dimensionality reduction, and standardization.
 - **`Logistic_Regression.ipynb`** – Implementation of the logistic regression model, performance evaluation, and fairness analysis.
+- **`hmda_naive_bayes.ipynb`** – Implementation of the Naive Bayes classifier, performance evaluation, and fairness analysis.
+- **`hmda_SGD.ipynb`** – Implementation of the Naive Bayes classifier, performance evaluation, and fairness analysis.
+
+### **Final Report**
+- **`/final checkpoint images/`** – Directory that contains all the images used in the final report.
+- **`ML spring 2025 plan.xlsx`** – Final Gantt Chart, excel version.
 
 ### **Midterm Report**
-- **`ML_spring_2025_midterm_checkpoint_plan.pdf/png`** – Gantt Chart for Midterm.
-
+- **`/midterm images/`** – Directory that contains all the images used in the midterm report.
 
 ### **Initial Report**
-- **`ML_spring_2025_plan.pdf/png/xlsx`** – Initial project planning documents, including Gantt chart and milestones.
+- **`ML spring 2025 plan.pdf/png`** – Initial project planning document, including Gantt chart and milestones.
 
 ### **Web-Based Report Viewer**
 The HTML files in this repository serve as an **interactive report viewer**, allowing users to navigate between different reports using JavaScript-powered buttons.
 
-- **`midterm.html`** – Midterm report in an interactive format.
+- **`final.html`** – Final report webpage.
+- **`midterm.html`** – Midterm report webpage.
 - **`styles.css`** – Stylesheet for report formatting.
 - **`script.js`** – JavaScript to enable navigation between different report sections.
 - **`index.html`** – Main landing page for initial project report
