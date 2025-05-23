@@ -2,6 +2,8 @@
 
 This repository contains our midterm project for Spring 2025, analyzing loan approval decisions using the 2018 HMDA dataset. Our work focuses on **data preprocessing, logistic regression modeling, and fairness-aware machine learning** to evaluate biases in lending decisions.
 
+Note: This is a copy of the original from my Georgia Tech github enterprise account. It is copied over for archival purposes, none of the code base has been changed and the commit history is preserved. Specific contributions are also listed on report pages, as much of the collaboration was done on google drive. The interactive report viewer can be accessed in browser through github pages at [https://husseinrmaile.github.io/ML-Loan-Fairness/index.html](https://husseinrmaile.github.io/ML-Loan-Fairness/index.html).
+
 ## Repository Structure
 
 ### **Notebooks**
